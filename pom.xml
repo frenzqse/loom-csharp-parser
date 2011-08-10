@@ -31,7 +31,7 @@
     <maven.plugin.checkstyle.version>2.6</maven.plugin.checkstyle.version>
   </properties>
 
-  <groupId>org.openengsb.net.parser</groupId>
+  <groupId>org.openengsb.parser</groupId>
   <artifactId>openengsb-parser-csharp</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>

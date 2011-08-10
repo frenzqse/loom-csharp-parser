@@ -14,37 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
+package org.openengsb.parser.csharp.structure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author peter
  * 
  */
-public class CMethod extends CTypeEntry {
-    private List<CParameter> parameters = new ArrayList<CParameter>();
+public class CInterface extends CType<CTypeEntry> {
+    private Collection<CParameterizedType> interfaces;
 
-    public CMethod(String name) {
+    public CInterface(String name) {
         super(name);
     }
 
-    public CProperty convertToProperty() {
-        return new CProperty(this);
+    /**
+     * @param interfaces the interfaces to set
+     */
+    public void setInterfaces(Collection<CParameterizedType> interfaces) {
+        this.interfaces = interfaces;
     }
 
     /**
-     * @return the parameters
+     * @return the interfaces
      */
-    public List<CParameter> getParameters() {
-        return parameters;
-    }
-
-    /**
-     * @param parameters the parameters to set
-     */
-    public void setParameters(List<CParameter> parameters) {
-        this.parameters = parameters;
+    public Collection<CParameterizedType> getInterfaces() {
+        return interfaces;
     }
 }

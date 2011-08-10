@@ -14,17 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
+package org.openengsb.parser.csharp.filter;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
+import org.openengsb.parser.csharp.structure.CType;
 
 /**
- * @author Peter
+ * @author peter
  * 
  */
-public class CEnum extends CType<String> {
-    /**
-     * @param name
-     */
-    public CEnum(String name) {
-        super(name);
-    }
+public interface Filter {
+    public void initialize(String configFile) throws IOException;
+
+    public Collection<CType<?>> process(Collection<CType<?>> types);
+
+    public List<String> getErrors();
 }

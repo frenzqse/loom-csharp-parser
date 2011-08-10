@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.openengsb.parser.csharp.structure;
 
-package org.openengsb.dotnet.parser.structure;
-
-public class CProperty extends CTypeEntry {
-    public CProperty(CMethod method) {
-        super(toPropertyName(method.getOriginalName()));
-
-        setName(toPropertyName(method.getName()));
-        setReturnType(method.getReturnType());
-    }
-
-    public static String toPropertyName(String name) {
-        String lName = name.toLowerCase();
-
-        if (lName.startsWith("is"))
-            name = name.substring(2);
-        else if (lName.startsWith("set") || lName.startsWith("get"))
-            name = name.substring(3);
-
-        return name;
+/**
+ * @author Peter
+ * 
+ */
+public class CEnum extends CType<String> {
+    /**
+     * @param name
+     */
+    public CEnum(String name) {
+        super(name);
     }
 }

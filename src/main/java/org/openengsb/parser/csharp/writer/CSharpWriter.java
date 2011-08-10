@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.writer;
+package org.openengsb.parser.csharp.writer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,15 +26,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openengsb.dotnet.parser.structure.CClass;
-import org.openengsb.dotnet.parser.structure.CEnum;
-import org.openengsb.dotnet.parser.structure.CInterface;
-import org.openengsb.dotnet.parser.structure.CMethod;
-import org.openengsb.dotnet.parser.structure.CParameter;
-import org.openengsb.dotnet.parser.structure.CParameterizedType;
-import org.openengsb.dotnet.parser.structure.CProperty;
-import org.openengsb.dotnet.parser.structure.CType;
-import org.openengsb.dotnet.parser.structure.CTypeEntry;
+import org.openengsb.parser.csharp.structure.CClass;
+import org.openengsb.parser.csharp.structure.CEnum;
+import org.openengsb.parser.csharp.structure.CInterface;
+import org.openengsb.parser.csharp.structure.CMethod;
+import org.openengsb.parser.csharp.structure.CParameter;
+import org.openengsb.parser.csharp.structure.CParameterizedType;
+import org.openengsb.parser.csharp.structure.CProperty;
+import org.openengsb.parser.csharp.structure.CType;
+import org.openengsb.parser.csharp.structure.CTypeEntry;
 
 public class CSharpWriter implements Writer {
     private Set<String> serializedTypes = new HashSet<String>();

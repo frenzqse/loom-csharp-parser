@@ -14,69 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.openengsb.parser.csharp.structure;
 
 /**
  * @author peter
  * 
  */
-public abstract class CType<T> {
+public abstract class CTypeEntry {
     private String originalName;
-    private String fullName;
-    private List<T> entries = new ArrayList<T>();
-    private boolean simpleType = false;
+    private String name;
+    private CParameterizedType returnType;
 
-    public CType(String name) {
-        originalName = fullName = name;
+    protected CTypeEntry(String name) {
+        this.name = this.originalName = name;
     }
 
     /**
-     * @return the simpleType
+     * @return the name
      */
-    public boolean isSimpleType() {
-        return simpleType;
+    public String getName() {
+        return name;
     }
 
     /**
-     * @param simpleType the simpleType to set
+     * @param name the name to set
      */
-    public void setSimpleType(boolean simpleType) {
-        this.simpleType = simpleType;
-    }
-
-    /**
-     * @return the fullName
-     */
-    public String getFullName() {
-        return fullName;
-    }
-
-    /**
-     * @param fullName the fullName to set
-     */
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    /**
-     * @return the entries
-     */
-    public List<T> getEntries() {
-        return entries;
-    }
-
-    /**
-     * @param entries the entries to set
-     */
-    public void setEntries(List<T> entries) {
-        this.entries = entries;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOriginalName() {
         return originalName;
+    }
+
+    /**
+     * @return the returnType
+     */
+    public CParameterizedType getReturnType() {
+        return returnType;
+    }
+
+    /**
+     * @param returnType the returnType to set
+     */
+    public void setReturnType(CParameterizedType returnType) {
+        this.returnType = returnType;
     }
 
     /*
@@ -86,7 +68,9 @@ public abstract class CType<T> {
      */
     @Override
     public int hashCode() {
-        return ((fullName == null) ? 0 : fullName.hashCode());
+        int result = ((name == null) ? 0 : name.hashCode());
+        result += ((returnType == null) ? 0 : returnType.hashCode());
+        return result;
     }
 
     /*
@@ -102,15 +86,22 @@ public abstract class CType<T> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CType<?>)) {
+        if (!(obj instanceof CTypeEntry)) {
             return false;
         }
-        CType<?> other = (CType<?>) obj;
-        if (fullName == null) {
-            if (other.fullName != null) {
+        CTypeEntry other = (CTypeEntry) obj;
+        if (name == null) {
+            if (other.name != null) {
                 return false;
             }
-        } else if (!fullName.equals(other.fullName)) {
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (returnType == null) {
+            if (other.returnType != null) {
+                return false;
+            }
+        } else if (!returnType.equals(other.returnType)) {
             return false;
         }
         return true;
@@ -123,6 +114,6 @@ public abstract class CType<T> {
      */
     @Override
     public String toString() {
-        return "Type [fullName=" + fullName + "]";
+        return "TypeEntry [name=" + name + ", returnType=" + returnType + "]";
     }
 }

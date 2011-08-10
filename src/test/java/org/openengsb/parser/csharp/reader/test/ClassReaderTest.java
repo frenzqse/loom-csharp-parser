@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.dotnet.parser.reader.test;
+package org.openengsb.parser.csharp.reader.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -25,8 +25,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openengsb.dotnet.parser.reader.ClassReader;
-import org.openengsb.dotnet.parser.structure.CType;
+import org.openengsb.parser.csharp.reader.ClassReader;
+import org.openengsb.parser.csharp.structure.CType;
 
 public class ClassReaderTest {
 
@@ -38,7 +38,7 @@ public class ClassReaderTest {
     }
 
     /**
-     * Test method for {@link org.openengsb.dotnet.parser.reader.ClassReader#initialize(java.lang.String)}.
+     * Test method for {@link org.openengsb.parser.csharp.reader.ClassReader#initialize(java.lang.String)}.
      */
     @Test
     @Ignore
@@ -47,7 +47,7 @@ public class ClassReaderTest {
     }
 
     /**
-     * Test method for {@link org.openengsb.dotnet.parser.reader.ClassReader#process()}.
+     * Test method for {@link org.openengsb.parser.csharp.reader.ClassReader#process()}.
      */
     @Test
     @Ignore
@@ -56,7 +56,7 @@ public class ClassReaderTest {
     }
 
     /**
-     * Test method for {@link org.openengsb.dotnet.parser.reader.ClassReader#getErrors()}.
+     * Test method for {@link org.openengsb.parser.csharp.reader.ClassReader#getErrors()}.
      */
     @Test
     public final void testGetErrors() {
@@ -65,7 +65,7 @@ public class ClassReaderTest {
 
     /**
      * Test method for
-     * {@link org.openengsb.dotnet.parser.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
+     * {@link org.openengsb.parser.csharp.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
      */
     @Test
     public final void testCreateAndSaveSimpleType() {
@@ -79,7 +79,7 @@ public class ClassReaderTest {
 
     /**
      * Test method for
-     * {@link org.openengsb.dotnet.parser.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
+     * {@link org.openengsb.parser.csharp.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
      */
     @Test
     public final void testCreateAndSaveInterfaceType() {
@@ -94,7 +94,7 @@ public class ClassReaderTest {
 
     /**
      * Test method for
-     * {@link org.openengsb.dotnet.parser.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
+     * {@link org.openengsb.parser.csharp.reader.ClassReader#createAndSaveType(java.lang.Class, boolean)}.
      */
     @Test
     public final void testCreateAndSaveClassType() {
@@ -109,7 +109,7 @@ public class ClassReaderTest {
 
     /**
      * Test method for
-     * {@link org.openengsb.dotnet.parser.reader.ClassReader#createParametrizedType(java.lang.reflect.Type)}.
+     * {@link org.openengsb.parser.csharp.reader.ClassReader#createParametrizedType(java.lang.reflect.Type)}.
      */
     @Test
     @Ignore
@@ -119,7 +119,7 @@ public class ClassReaderTest {
 
     /**
      * Test method for
-     * {@link org.openengsb.dotnet.parser.reader.ClassReader#analyzeType(org.openengsb.dotnet.parser.structure.CType, java.lang.Class)}
+     * {@link org.openengsb.parser.csharp.reader.ClassReader#analyzeType(org.openengsb.parser.csharp.structure.CType, java.lang.Class)}
      * .
      */
     @Test
@@ -129,7 +129,7 @@ public class ClassReaderTest {
     }
 
     /**
-     * Test method for {@link org.openengsb.dotnet.parser.reader.ClassReader#createMethod(java.lang.reflect.Method)}.
+     * Test method for {@link org.openengsb.parser.csharp.reader.ClassReader#createMethod(java.lang.reflect.Method)}.
      */
     @Test
     @Ignore

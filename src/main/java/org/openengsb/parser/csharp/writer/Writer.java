@@ -14,22 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.reader;
+package org.openengsb.parser.csharp.writer;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.openengsb.dotnet.parser.structure.CType;
+import org.openengsb.parser.csharp.structure.CType;
 
-/**
- * @author peter
- * 
- */
-public interface Reader {
-    public void initialize(String configFile) throws IOException;
+public interface Writer {
+    public void initialize(String outputDir) throws IOException;
 
-    public Collection<CType<?>> process();
+    public void process(Collection<CType<?>> types);
 
     public List<String> getErrors();
 }

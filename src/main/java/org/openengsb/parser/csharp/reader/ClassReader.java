@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.reader;
+package org.openengsb.parser.csharp.reader;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -30,15 +30,15 @@ import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.openengsb.dotnet.parser.structure.CClass;
-import org.openengsb.dotnet.parser.structure.CEnum;
-import org.openengsb.dotnet.parser.structure.CInterface;
-import org.openengsb.dotnet.parser.structure.CMethod;
-import org.openengsb.dotnet.parser.structure.CParameter;
-import org.openengsb.dotnet.parser.structure.CParameterizedType;
-import org.openengsb.dotnet.parser.structure.CType;
-import org.openengsb.dotnet.parser.structure.CTypeEntry;
-import org.openengsb.dotnet.parser.utils.XmlHelper;
+import org.openengsb.parser.csharp.structure.CClass;
+import org.openengsb.parser.csharp.structure.CEnum;
+import org.openengsb.parser.csharp.structure.CInterface;
+import org.openengsb.parser.csharp.structure.CMethod;
+import org.openengsb.parser.csharp.structure.CParameter;
+import org.openengsb.parser.csharp.structure.CParameterizedType;
+import org.openengsb.parser.csharp.structure.CType;
+import org.openengsb.parser.csharp.structure.CTypeEntry;
+import org.openengsb.parser.csharp.utils.XmlHelper;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

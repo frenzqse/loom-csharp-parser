@@ -14,51 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
+package org.openengsb.parser.csharp.structure;
+
+import java.util.List;
 
 /**
  * @author peter
  * 
  */
-public abstract class CTypeEntry {
-    private String originalName;
-    private String name;
-    private CParameterizedType returnType;
+public class CParameterizedType {
+    private List<CParameterizedType> genericTypes;
+    private CType<?> type;
 
-    protected CTypeEntry(String name) {
-        this.name = this.originalName = name;
+    /**
+     * @return the genericTypes
+     */
+    public List<CParameterizedType> getGenericTypes() {
+        return genericTypes;
     }
 
     /**
-     * @return the name
+     * @param genericTypes the genericTypes to set
      */
-    public String getName() {
-        return name;
+    public void setGenericTypes(List<CParameterizedType> genericTypes) {
+        this.genericTypes = genericTypes;
     }
 
     /**
-     * @param name the name to set
+     * @return the type
      */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOriginalName() {
-        return originalName;
+    public CType<?> getType() {
+        return type;
     }
 
     /**
-     * @return the returnType
+     * @param type the type to set
      */
-    public CParameterizedType getReturnType() {
-        return returnType;
-    }
-
-    /**
-     * @param returnType the returnType to set
-     */
-    public void setReturnType(CParameterizedType returnType) {
-        this.returnType = returnType;
+    public void setType(CType<?> type) {
+        this.type = type;
     }
 
     /*
@@ -68,8 +61,8 @@ public abstract class CTypeEntry {
      */
     @Override
     public int hashCode() {
-        int result = ((name == null) ? 0 : name.hashCode());
-        result += ((returnType == null) ? 0 : returnType.hashCode());
+        int result = ((genericTypes == null) ? 0 : genericTypes.hashCode());
+        result += ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
@@ -86,22 +79,22 @@ public abstract class CTypeEntry {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CTypeEntry)) {
+        if (!(obj instanceof CParameterizedType)) {
             return false;
         }
-        CTypeEntry other = (CTypeEntry) obj;
-        if (name == null) {
-            if (other.name != null) {
+        CParameterizedType other = (CParameterizedType) obj;
+        if (genericTypes == null) {
+            if (other.genericTypes != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!genericTypes.equals(other.genericTypes)) {
             return false;
         }
-        if (returnType == null) {
-            if (other.returnType != null) {
+        if (type == null) {
+            if (other.type != null) {
                 return false;
             }
-        } else if (!returnType.equals(other.returnType)) {
+        } else if (!type.equals(other.type)) {
             return false;
         }
         return true;
@@ -114,6 +107,7 @@ public abstract class CTypeEntry {
      */
     @Override
     public String toString() {
-        return "TypeEntry [name=" + name + ", returnType=" + returnType + "]";
+        return "CParameterizedType [type=" + type + ", genericTypes="
+                + genericTypes + "]";
     }
 }

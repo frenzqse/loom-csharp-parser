@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.filter;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+package org.openengsb.parser.csharp.structure;
 
-import org.openengsb.dotnet.parser.structure.CType;
+public class CProperty extends CTypeEntry {
+    public CProperty(CMethod method) {
+        super(toPropertyName(method.getOriginalName()));
 
-/**
- * @author peter
- * 
- */
-public interface Filter {
-    public void initialize(String configFile) throws IOException;
+        setName(toPropertyName(method.getName()));
+        setReturnType(method.getReturnType());
+    }
 
-    public Collection<CType<?>> process(Collection<CType<?>> types);
+    public static String toPropertyName(String name) {
+        String lName = name.toLowerCase();
 
-    public List<String> getErrors();
+        if (lName.startsWith("is"))
+            name = name.substring(2);
+        else if (lName.startsWith("set") || lName.startsWith("get"))
+            name = name.substring(3);
+
+        return name;
+    }
 }

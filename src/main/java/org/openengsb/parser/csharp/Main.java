@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser;
+package org.openengsb.parser.csharp;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.openengsb.dotnet.parser.filter.Filter;
-import org.openengsb.dotnet.parser.reader.Reader;
-import org.openengsb.dotnet.parser.structure.CType;
-import org.openengsb.dotnet.parser.writer.Writer;
+import org.openengsb.parser.csharp.filter.Filter;
+import org.openengsb.parser.csharp.reader.Reader;
+import org.openengsb.parser.csharp.structure.CType;
+import org.openengsb.parser.csharp.writer.Writer;
 
 /**
  * @author peter

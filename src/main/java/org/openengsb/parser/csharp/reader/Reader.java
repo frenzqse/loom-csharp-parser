@@ -14,47 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
+package org.openengsb.parser.csharp.reader;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+
+import org.openengsb.parser.csharp.structure.CType;
 
 /**
  * @author peter
  * 
  */
-public class CClass extends CType<CTypeEntry> {
-    private Collection<CParameterizedType> interfaces;
-    private CParameterizedType superClass;
+public interface Reader {
+    public void initialize(String configFile) throws IOException;
 
-    public CClass(String name) {
-        super(name);
-    }
+    public Collection<CType<?>> process();
 
-    /**
-     * @param interfaces the interfaces to set
-     */
-    public void setInterfaces(Collection<CParameterizedType> interfaces) {
-        this.interfaces = interfaces;
-    }
-
-    /**
-     * @return the interfaces
-     */
-    public Collection<CParameterizedType> getInterfaces() {
-        return interfaces;
-    }
-
-    /**
-     * @param superClass the superClass to set
-     */
-    public void setSuperClass(CParameterizedType superClass) {
-        this.superClass = superClass;
-    }
-
-    /**
-     * @return the superClass
-     */
-    public CParameterizedType getSuperClass() {
-        return superClass;
-    }
+    public List<String> getErrors();
 }

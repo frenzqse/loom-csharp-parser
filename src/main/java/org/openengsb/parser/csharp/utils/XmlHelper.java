@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.utils;
+package org.openengsb.parser.csharp.utils;
 
 import java.io.File;
 import java.io.IOException;

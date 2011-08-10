@@ -14,44 +14,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openengsb.dotnet.parser.structure;
+package org.openengsb.parser.csharp.structure;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author peter
  * 
  */
-public class CParameterizedType {
-    private List<CParameterizedType> genericTypes;
-    private CType<?> type;
+public abstract class CType<T> {
+    private String originalName;
+    private String fullName;
+    private List<T> entries = new ArrayList<T>();
+    private boolean simpleType = false;
 
-    /**
-     * @return the genericTypes
-     */
-    public List<CParameterizedType> getGenericTypes() {
-        return genericTypes;
+    public CType(String name) {
+        originalName = fullName = name;
     }
 
     /**
-     * @param genericTypes the genericTypes to set
+     * @return the simpleType
      */
-    public void setGenericTypes(List<CParameterizedType> genericTypes) {
-        this.genericTypes = genericTypes;
+    public boolean isSimpleType() {
+        return simpleType;
     }
 
     /**
-     * @return the type
+     * @param simpleType the simpleType to set
      */
-    public CType<?> getType() {
-        return type;
+    public void setSimpleType(boolean simpleType) {
+        this.simpleType = simpleType;
     }
 
     /**
-     * @param type the type to set
+     * @return the fullName
      */
-    public void setType(CType<?> type) {
-        this.type = type;
+    public String getFullName() {
+        return fullName;
+    }
+
+    /**
+     * @param fullName the fullName to set
+     */
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    /**
+     * @return the entries
+     */
+    public List<T> getEntries() {
+        return entries;
+    }
+
+    /**
+     * @param entries the entries to set
+     */
+    public void setEntries(List<T> entries) {
+        this.entries = entries;
+    }
+
+    public String getOriginalName() {
+        return originalName;
     }
 
     /*
@@ -61,9 +86,7 @@ public class CParameterizedType {
      */
     @Override
     public int hashCode() {
-        int result = ((genericTypes == null) ? 0 : genericTypes.hashCode());
-        result += ((type == null) ? 0 : type.hashCode());
-        return result;
+        return ((fullName == null) ? 0 : fullName.hashCode());
     }
 
     /*
@@ -79,22 +102,15 @@ public class CParameterizedType {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CParameterizedType)) {
+        if (!(obj instanceof CType<?>)) {
             return false;
         }
-        CParameterizedType other = (CParameterizedType) obj;
-        if (genericTypes == null) {
-            if (other.genericTypes != null) {
+        CType<?> other = (CType<?>) obj;
+        if (fullName == null) {
+            if (other.fullName != null) {
                 return false;
             }
-        } else if (!genericTypes.equals(other.genericTypes)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
+        } else if (!fullName.equals(other.fullName)) {
             return false;
         }
         return true;
@@ -107,7 +123,6 @@ public class CParameterizedType {
      */
     @Override
     public String toString() {
-        return "CParameterizedType [type=" + type + ", genericTypes="
-                + genericTypes + "]";
+        return "Type [fullName=" + fullName + "]";
     }
 }
