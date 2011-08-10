@@ -1,0 +1,51 @@
+====
+    Licensed to the Austrian Association for Software Tool Integration (AASTI)
+    under one or more contributor license agreements. See the NOTICE file
+    distributed with this work for additional information regarding copyright
+    ownership. The AASTI licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+====
+
+OpenEngSB .Net Interface Parser
+===============================
+
+This project can be used to parse Java-Interfaces, -Classes and -Enums and compile them to .Net 2.0 using mono.
+Currently only parsing and creating of .cs files is supported. Compilation is done with a simple NAnt build-script.
+
+Prerequisites
+-------------
+
+1. The parser uses reflection to retrieve the method-informations so your java files have to be compiled
+2. Compile the parser using ant (ant or ant build)
+
+Parsing java classes (running the parser)
+-----------------------------------------
+
+1. First lets try to start the `Main` class 
+
+        $ java org.openengsb.dotnet.parser.Main
+
+   The result should be an `ArrayIndexOutOfBoundException` because we didn't provide any parameters about reader, filter and writer
+
+2. The syntax for the parameters is: 
+      
+        Reader_ClassName Reader_Parameter {Filter_ClassName Filter_Parameter}* Writer_ClassName Writer_Parameter
+
+   In our case we use the ClassReader which needs a xml-config (reader.config, is in this directory); CSharpFilter needs a key-value-config (filter.config) also in this directory and the CSharpWriter only needs the path to the output-directory.    
+   The call could look like this:
+
+        $ java org.openengsb.dotnet.parser.Main org.openengsb.dotnet.parser.reader.ClassReader reader.config org.openengsb.dotnet.parser.filter.CSharpFilter filter.config org.openengsb.dotnet.parser.writer.CSharpWriter src/csharp
+      
+3. Now you most probably see an error, that some class is not in the class-path and couldn't be found, To solve this, you just have to add all your classes to the classpath and the final command could look something like this:
+
+        $ java -classpath .:additionalClasses org.openengsb.dotnet.parser.Main org.openengsb.dotnet.parser.reader.ClassReader reader.config org.openengsb.dotnet.parser.filter.CSharpFilter filter.config org.openengsb.dotnet.parser.writer.CSharpWriter src/csharp
+
