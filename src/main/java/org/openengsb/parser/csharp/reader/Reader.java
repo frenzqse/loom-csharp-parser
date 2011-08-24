@@ -17,6 +17,7 @@
 package org.openengsb.parser.csharp.reader;
 
 import java.io.IOException;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import org.openengsb.parser.csharp.structure.CType;
  * 
  */
 public interface Reader {
-    public void initialize(String configFile) throws IOException;
+	public void initialize(String configFile, URLClassLoader loader) throws IOException;
 
     public Collection<CType<?>> process();
 

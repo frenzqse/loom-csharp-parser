@@ -17,6 +17,8 @@
 package org.openengsb.parser.csharp;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,32 +34,47 @@ import org.openengsb.parser.csharp.writer.Writer;
 public class Main {
     private static int statusCode = 0;
 
+	private static final int readerId 		= 1;
+	private static final int readerConfigId = 2;
+	private static final int filterId	 	= 3;
+	private static final int writerId 		= 2;
+	private static final int writerConfigId = 1;
+
     /**
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("Current Classpath: " + System.getProperty("java.class.path"));
-
-        Collection<CType<?>> types;
+		System.out.println("Current Classpath: " + args[0]);
+		
+		Collection<CType<?>> types;
+		String[] strUrls = args[0].split(":");
+		URL[] urls = new URL[strUrls.length];
+		
         try {
-            Reader r;
-            r = (Reader) Class.forName(args[0]).newInstance();
-            r.initialize(args[1]);
+			for(int i = 0; i < strUrls.length; i++) {
+				urls[i] = new URL("file", "", strUrls[i]);
+			}
+			
+			URLClassLoader cl = new URLClassLoader(urls);
+
+			Reader r;
+			r = (Reader)Class.forName(args[readerId]).newInstance();
+			r.initialize(args[readerConfigId], cl);
 
             types = r.process();
             printErrors(r.getErrors(), r.getClass());
 
             Filter f;
-            for (int i = 2; i < args.length - 2; i += 2) {
-                f = (Filter) Class.forName(args[i]).newInstance();
-                f.initialize(args[i + 1]);
-
-                types = f.process(types);
-                printErrors(f.getErrors(), f.getClass());
-            }
-
-            Writer w = (Writer) Class.forName(args[args.length - 2]).newInstance();
-            w.initialize(args[args.length - 1]);
+			for (int i = filterId; i < args.length - writerId; i += 2) {
+				f = (Filter)Class.forName(args[i]).newInstance();
+				f.initialize(args[i + 1]);
+				
+				types = f.process(types);
+				printErrors(f.getErrors(), f.getClass());
+			}
+			
+			Writer w = (Writer)Class.forName(args[args.length - writerId]).newInstance();
+			w.initialize(args[args.length - writerConfigId]);
 
             w.process(types);
             printErrors(w.getErrors(), w.getClass());

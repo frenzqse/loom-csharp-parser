@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,207 +50,236 @@ import org.xml.sax.SAXException;
  * 
  */
 public class ClassReader implements Reader {
-    private List<String> classNames = new ArrayList<String>();
-    private List<String> errors = new ArrayList<String>();
-    private Map<String, CType<?>> types = new HashMap<String, CType<?>>();
-    private ClassLoader loader;
+	protected List<String> classNames = new ArrayList<String>();
+	protected List<String> errors = new ArrayList<String>();
+	protected Map<String, CType<?>> types = new HashMap<String, CType<?>>();
+	protected URLClassLoader loader;
+	
+	/* (non-Javadoc)
+	 * @see org.openengsb.dotnet.parser.reader.Reader#initialize(java.lang.String)
+	 */
+	@Override
+	public void initialize(String configFile, URLClassLoader loader) throws IOException {
+		Document dom;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openengsb.dotnet.parser.reader.Reader#initialize(java.lang.String)
-     */
-    @Override
-    public void initialize(String configFile) throws IOException {
-        Document dom;
+//		loader = Thread.currentThread().getContextClassLoader();
+		this.loader = loader;
+		
+		try {
+			dom = XmlHelper.getDocument(configFile);
+		} catch (SAXException e) {
+			throw new IOException("Couldn't process file " + configFile, e);
+		} catch (ParserConfigurationException e) {
+			throw new IOException("Couldn't process file " + configFile, e);
+		}
 
-        loader = Thread.currentThread().getContextClassLoader();
+		NodeList lst;
+		String typeName;
+		
+		try {
+			lst = XmlHelper.executeXPath(dom, "//simpleTypes/add");
 
-        try {
-            dom = XmlHelper.getDocument(configFile);
-        } catch (SAXException e) {
-            throw new IOException("Couldn't process file " + configFile, e);
-        } catch (ParserConfigurationException e) {
-            throw new IOException("Couldn't process file " + configFile, e);
-        }
+			for (int i = 0; i < lst.getLength(); i++) {
+				try {
+					typeName = lst.item(i).getTextContent();
+					System.out.println("New simple-type added: " + typeName);
+					createAndSaveType(Class.forName(typeName), true);
+				} catch (DOMException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (XPathExpressionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-        NodeList lst;
-        String typeName;
+		try {
+			lst = XmlHelper.executeXPath(dom, "//typesToParse/add");
+			
+			for (int i = 0; i < lst.getLength(); i++) {
+				typeName = lst.item(i).getTextContent();
+				classNames.add(typeName);
+			}
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-        try {
-            lst = XmlHelper.executeXPath(dom, "//simpleTypes/add");
+	/* (non-Javadoc)
+	 * @see org.openengsb.dotnet.parser.reader.Reader#process()
+	 */
+	@Override
+	public Collection<CType<?>> process() {
+		boolean onlyInterfaces = false;
+		
+		errors = new ArrayList<String>();
+				
+		for (String name : classNames) {
+			Class<?> cls = null;
+			
+			try {
+//				createAndSaveType(Class.forName(name), false);
+				cls = loader.loadClass(name);
+			} catch (ClassNotFoundException e) {
+				errors.add(name + " couldn't be found in the classpath. (" + e.getMessage() + ")");
+			}
+			
+			if (cls != null) {
+				if (!onlyInterfaces || cls.isInterface()) {
+					createAndSaveType(cls, false);
+				}
+			}
+		}
 
-            for (int i = 0; i < lst.getLength(); i++) {
-                try {
-                    typeName = lst.item(i).getTextContent();
-                    System.out.println("New simple-type added: " + typeName);
-                    createAndSaveType(Class.forName(typeName), true);
-                } catch (DOMException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        } catch (XPathExpressionException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+		return types.values();
+	}
+	
+	public List<String> getErrors() {
+		return errors;
+	}
+	
+	public CType<?> createAndSaveType(Class<?> cls, boolean isSimple) {
+		String name = cls.getName();
+		CType<?> ret = null;
+		
+		if (cls.isPrimitive())
+			isSimple = true;
+		
+		if (types.containsKey(name))
+			ret = types.get(name);
+		else {			
+			if (cls.isInterface()) {
+				ret = new CInterface(name);
+			} else if (cls.isEnum()) {
+				ret = new CEnum(name);
+			} else {
+				ret = new CClass(name);
+			}
+			
+			ret.setSimpleType(isSimple);
+			
+			types.put(name, ret);
+			
+			if (!isSimple)
+				System.out.println("New complex-type added: " + name);
 
-        try {
-            lst = XmlHelper.executeXPath(dom, "//typesToParse/add");
-
-            for (int i = 0; i < lst.getLength(); i++) {
-                typeName = lst.item(i).getTextContent();
-                System.out.println("New complex-type added: " + typeName);
-                classNames.add(typeName);
-            }
-        } catch (XPathExpressionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.openengsb.dotnet.parser.reader.Reader#process()
-     */
-    @Override
-    public Collection<CType<?>> process() {
-        errors = new ArrayList<String>();
-
-        for (String name : classNames) {
-            try {
-                // createAndSaveType(Class.forName(name), false);
-                createAndSaveType(loader.loadClass(name), false);
-            } catch (ClassNotFoundException e) {
-                errors.add(name + " couldn't be found in the classpath. (" + e.getMessage() + ")");
-            }
-        }
-
-        return types.values();
-    }
-
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    public CType<?> createAndSaveType(Class<?> cls, boolean isSimple) {
-        String name = cls.getName();
-        CType<?> ret = null;
-
-        if (cls.isPrimitive())
-            isSimple = true;
-
-        if (types.containsKey(name))
-            ret = types.get(name);
-        else {
-            if (cls.isInterface()) {
-                ret = new CInterface(name);
-            } else if (cls.isEnum()) {
-                ret = new CEnum(name);
-            } else {
-                ret = new CClass(name);
-            }
-
-            ret.setSimpleType(isSimple);
-
-            types.put(name, ret);
-
-            if (!isSimple) {
-                analyzeType(ret, cls);
-            }
-        }
-
-        return ret;
-    }
-
-    public CParameterizedType createParametrizedType(Type type) {
-        CParameterizedType ret = new CParameterizedType();
-
-        if (type instanceof ParameterizedType) {
-            ParameterizedType paramType = (ParameterizedType) type;
-            List<CParameterizedType> genericTypes = new ArrayList<CParameterizedType>();
-
-            ret.setType(createAndSaveType((Class<?>) paramType.getRawType(), false));
-
-            for (Type t : paramType.getActualTypeArguments()) {
-                genericTypes.add(createParametrizedType(t));
-            }
-
-            ret.setGenericTypes(genericTypes);
-        } else if (type instanceof Class<?>) {
-            ret.setType(createAndSaveType((Class<?>) type, false));
-        } else {
-            System.out.println("und was jetzt??? - " + type);
-        }
-
-        return ret;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void analyzeType(CType<?> type, Class<?> cls) {
-        if (cls.isEnum()) {
-            List<String> entries = new ArrayList<String>();
-
-            for (Object item : cls.getEnumConstants()) {
-                entries.add(item.toString());
-            }
-
-            ((CType<String>) type).setEntries(entries);
-        } else { // Type is Class or Interface
-            List<CTypeEntry> entries = new ArrayList<CTypeEntry>();
-
-            for (Method m : cls.getMethods()) {
-                if (m.getDeclaringClass().equals(cls))
-                    entries.add(createMethod(m));
-            }
-
-            ((CType<CTypeEntry>) type).setEntries(entries);
-
-            Type interfaces[] = cls.getGenericInterfaces();
-
-            if (interfaces != null) {
-                List<CParameterizedType> lstInterfaces = new Vector<CParameterizedType>();
-
-                for (Type t : interfaces) {
-                    lstInterfaces.add(createParametrizedType(t));
-                }
-
-                if (cls.isInterface()) {
-                    ((CInterface) type).setInterfaces(lstInterfaces);
-                } else {
-                    ((CClass) type).setInterfaces(lstInterfaces);
-                }
-            }
-
-            if (!cls.isInterface()) {
-                Type superClass = cls.getGenericSuperclass();
-
-                if (superClass != null) {
-                    ((CClass) type).setSuperClass(createParametrizedType(superClass));
-                }
-            }
-        }
-    }
-
-    public CMethod createMethod(Method method) {
-        CMethod ret = new CMethod(method.getName());
-        List<CParameter> parameters = new ArrayList<CParameter>();
-
-        ret.setReturnType(createParametrizedType(method.getGenericReturnType()));
-
-        int argCount = 0;
-
-        for (Type t : method.getGenericParameterTypes()) {
-            System.out.println("lvTbl is null");
-            parameters.add(new CParameter("arg" + argCount, createParametrizedType(t)));
-            argCount++;
-        }
-
-        ret.setParameters(parameters);
-        return ret;
-    }
+			if (!isSimple) {
+				analyzeType(ret, cls);
+			}
+		}
+		
+		return ret;
+	}
+	
+	public CParameterizedType createParametrizedType(Type type) {
+		CParameterizedType ret = new CParameterizedType();
+		
+		if (type instanceof ParameterizedType) {
+			ParameterizedType paramType = (ParameterizedType)type;
+			List<CParameterizedType> genericTypes = new ArrayList<CParameterizedType>();
+			
+			ret.setType(createAndSaveType((Class<?>)paramType.getRawType(), false));
+			
+			for(Type t : paramType.getActualTypeArguments()) {
+				genericTypes.add(createParametrizedType(t));
+			}
+			
+			ret.setGenericTypes(genericTypes);
+		} else if (type instanceof Class<?>){
+			ret.setType(createAndSaveType((Class<?>)type, false));
+		} else {
+			System.out.println("und was jetzt??? - " + type);
+		}
+		
+		return ret;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void analyzeType(CType<?> type, Class<?> cls) {
+		if (cls.isEnum()) {
+			List<String> entries = new ArrayList<String>();
+			
+			for (Object item : cls.getEnumConstants()) {
+				entries.add(item.toString());
+			}
+			
+			((CType<String>)type).setEntries(entries);
+		} else { // Type is Class or Interface
+			List<CTypeEntry> entries = new ArrayList<CTypeEntry>();
+			
+			for(Method m : cls.getMethods()) {
+				if (m.getDeclaringClass().equals(cls) && !isMethodOverriden(m))
+					entries.add(createMethod(m));
+			}
+			
+			((CType<CTypeEntry>)type).setEntries(entries);
+			
+			Type interfaces[] = cls.getGenericInterfaces();
+			
+			if (interfaces != null) {
+				List<CParameterizedType> lstInterfaces = new Vector<CParameterizedType>();
+				
+				for(Type t : interfaces) {
+					lstInterfaces.add(createParametrizedType(t));
+				}
+				
+				if (cls.isInterface()) {
+					((CInterface)type).setInterfaces(lstInterfaces);
+				} else {
+					((CClass)type).setInterfaces(lstInterfaces);
+				}
+			}
+			
+			if (!cls.isInterface()) {
+				Type superClass = cls.getGenericSuperclass();
+				
+				if (superClass != null) {
+					((CClass)type).setSuperClass(createParametrizedType(superClass));
+				}
+			}
+		}
+	}
+	
+	public CMethod createMethod(Method method) {
+		CMethod ret = new CMethod(method.getName());
+		List<CParameter> parameters = new ArrayList<CParameter>();
+		
+		ret.setReturnType(createParametrizedType(method.getGenericReturnType()));
+				
+		int argCount = 0;
+		
+		for(Type t : method.getGenericParameterTypes()) {
+			parameters.add(new CParameter("arg" + argCount, createParametrizedType(t)));			
+			argCount++;
+		}
+		
+		ret.setParameters(parameters);
+		return ret;
+	}
+	
+	public static boolean isMethodOverriden(Method myMethod) {
+	    Class<?> declaringClass = myMethod.getDeclaringClass();
+	    if (declaringClass.equals(Object.class)) {
+	        return false;
+	    } else {
+	    	declaringClass = declaringClass.getSuperclass();
+	    	
+	    	if (declaringClass == null)
+	    		return false;
+	    	else {
+			    try {
+			        declaringClass.getMethod(myMethod.getName(), myMethod.getParameterTypes());
+			        return true;
+			    } catch (NoSuchMethodException e) {
+			    	return false;
+			    }
+	    	}
+	    }
+	}
 }
+
